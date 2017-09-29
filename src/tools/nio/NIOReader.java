@@ -15,13 +15,11 @@ import tools.coolbyte.CoolBytes;
 
 public class NIOReader {
 
-	private static Charset cn = Charset.forName("GBK");
-	private static CharsetDecoder decoder = cn.newDecoder();
-	private int bufferSize = 16;
+	static final int DEFAULT_INITIAL_CAPACITY = 1 << 4; // aka 16
+	
+	private int bufferSize = DEFAULT_INITIAL_CAPACITY;
 	private FileChannel fileChannel;
 	private ByteBuffer buffer;
-	private List<Byte> byteList;
-	private CharBuffer cb;
 	private FileInputStream fis;
 	private boolean empty = false;
 	private boolean lastLine = false;
@@ -30,7 +28,6 @@ public class NIOReader {
 		fis = new FileInputStream(file);
 		fileChannel = fis.getChannel();
 		buffer = ByteBuffer.allocate(bufferSize);
-		cb = CharBuffer.allocate(bufferSize);
 	}
 
 	NIOReader(File file, int bufferSize) throws IOException {
@@ -38,17 +35,12 @@ public class NIOReader {
 		fileChannel = fis.getChannel();
 		this.bufferSize = bufferSize;
 		buffer = ByteBuffer.allocate(bufferSize);
-		cb = CharBuffer.allocate(bufferSize);
 	}
 
 	private void ensure() {
 		if (fis == null || fileChannel == null || buffer == null) {
 			throw new IllegalArgumentException(
 					"Attempt to use an uninitialized Reader!");
-		}
-		if (bufferSize % 2 != 0) {
-			throw new IllegalArgumentException(
-					"BufferSize must be divided by 2!");
 		}
 	}
 
@@ -117,16 +109,14 @@ public class NIOReader {
 		return readLastBufferLine();
 	}
 
-	public void test(int i) {
+	public void test(int n) {
 		File file = new File("src/nio.txt");
 		try {
-			System.out.println("test " + i);
-			NIOReader nioReader = new NIOReader(file, i);
-			System.out.println(nioReader.readLine());
-			System.out.println(nioReader.readLine());
-			System.out.println(nioReader.readLine());
-			System.out.println(nioReader.readLine());
-			System.out.println(nioReader.readLine());
+			System.out.println("test " + n);
+			NIOReader nioReader = new NIOReader(file, n);
+			for (int i = 0; i < 5; i++) {
+				System.out.println(nioReader.readLine());
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
