@@ -1,26 +1,40 @@
 package tools.develop;
 
+import tools.nio.NIOReader;
+
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 
 public class CodeHelper {
-	static private String rootPath = "C:\\Users\\hangbo.song\\git";
-	
-	public static void countCode(String path){
-		File file = new File(path);
+
+	private String rootPath;
+	private String regex;
+	public CodeHelper(String rootPath,String regex){
+		this.rootPath=rootPath;
+		this.regex=regex;
+	}
+	public void countCode(){
+		File file = new File(rootPath);
 		doCount(file);
 	}
 	
-	private static void doCount(File file){
-		if(file.isFile() && file.getName().matches(".*\\.java$")){
+	private void doCount(File file){
+		System.out.println("doCount..."+file.getAbsolutePath());
+		if(file.isFile() && file.getName().matches(regex)){
+			System.out.println("doCount... java source file..."+file.getAbsolutePath());
 			//java source code
 			try {
-				RandomAccessFile aFile = new RandomAccessFile(file, "r");
-				FileChannel inChannel = aFile.getChannel();
+				NIOReader nioReader = new NIOReader(file);
+				while (!nioReader.isEmpty()){
+					System.out.println(nioReader.readLine());
+				}
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 

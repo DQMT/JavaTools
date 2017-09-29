@@ -27,13 +27,16 @@ public class CoolBytes {
 	}
 
 	public String toString() {
+		return new String(toArray());
+	}
+
+	public byte [] toArray(){
 		byte[] newHb = new byte[offset];
 		for (int i = 0; i < offset; i++) {
 			newHb[i] = hb[i];
 		}
-		return new String(newHb);
+		return newHb;
 	}
-
 	public int length() {
 		return offset;
 	}

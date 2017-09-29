@@ -6,10 +6,11 @@ public class Main {
 		System.out.println("main constructor"+i++);
 	}
 	public static Main main = new Main();
-	
+
 	public static void main(String[] args) {
-		Main t = new Main();
-		System.out.println("main method"+i++);
-		//Main.main(null);
+		String p1 = "G:\\dev\\GitProjects\\longan\\src\\test\\java\\MybatisTest.java";
+		String p2 = "G:\\dev\\GitProjects\\longan";
+		CodeHelper codeHelper = new CodeHelper(p2,".*\\.java$");
+		codeHelper.countCode();
 	}
 }

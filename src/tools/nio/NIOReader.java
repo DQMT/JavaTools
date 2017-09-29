@@ -24,13 +24,13 @@ public class NIOReader {
 	private boolean empty = false;
 	private boolean lastLine = false;
 
-	NIOReader(File file) throws IOException {
+	public NIOReader(File file) throws IOException {
 		fis = new FileInputStream(file);
 		fileChannel = fis.getChannel();
 		buffer = ByteBuffer.allocate(bufferSize);
 	}
 
-	NIOReader(File file, int bufferSize) throws IOException {
+	public NIOReader(File file, int bufferSize) throws IOException {
 		fis = new FileInputStream(file);
 		fileChannel = fis.getChannel();
 		this.bufferSize = bufferSize;
@@ -66,6 +66,9 @@ public class NIOReader {
 				if (isCRLF(c)) {
 					buffer.compact();
 					buffer.flip();
+					if(!buffer.hasRemaining()){
+						empty=true;
+					}
 					return ignoreCRLF(bytes.toString());
 				}
 			}
@@ -104,9 +107,14 @@ public class NIOReader {
 		buffer.flip();
 		lastLine = true;
 		if (bytes.length() > 0) {
+			empty=true;
 			return bytes.toString();
 		}
 		return readLastBufferLine();
+	}
+
+	public boolean isEmpty(){
+		return empty;
 	}
 
 	public void test(int n) {
