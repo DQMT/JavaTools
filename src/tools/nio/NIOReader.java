@@ -3,21 +3,24 @@ package tools.nio;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
+import java.util.List;
+
+import tools.coolbyte.CoolBytes;
 
 public class NIOReader {
 
-	private static Charset cn = Charset.forName("GBK"); 
+	private static Charset cn = Charset.forName("GBK");
 	private static CharsetDecoder decoder = cn.newDecoder();
 	private int bufferSize = 16;
 	private FileChannel fileChannel;
 	private ByteBuffer buffer;
+	private List<Byte> byteList;
 	private CharBuffer cb;
 	private FileInputStream fis;
 	private boolean empty = false;
@@ -41,7 +44,11 @@ public class NIOReader {
 	private void ensure() {
 		if (fis == null || fileChannel == null || buffer == null) {
 			throw new IllegalArgumentException(
-					"Attempt to use an uninitialized Reader");
+					"Attempt to use an uninitialized Reader!");
+		}
+		if (bufferSize % 2 != 0) {
+			throw new IllegalArgumentException(
+					"BufferSize must be divided by 2!");
 		}
 	}
 
@@ -58,19 +65,20 @@ public class NIOReader {
 	}
 
 	private String readLastBufferLine() throws UnsupportedEncodingException {
-		StringBuilder sb = new StringBuilder();
+		CoolBytes bytes = new CoolBytes();
 		if (buffer.hasRemaining()) {
 			while (buffer.hasRemaining()) {
-				char c = (char) buffer.get();
-				sb.append(c);
+				byte b = buffer.get();
+				char c = (char) b;
+				bytes.add(b);
 				if (isCRLF(c)) {
 					buffer.compact();
 					buffer.flip();
-					return ignoreCRLF(sb.toString());
+					return ignoreCRLF(bytes.toString());
 				}
 			}
 			empty = true;
-			return sb.toString();
+			return bytes.toString();
 		} else {
 			empty = true;
 			return null;
@@ -85,19 +93,17 @@ public class NIOReader {
 		if (lastLine) {
 			return readLastBufferLine();
 		}
-		StringBuilder sb = new StringBuilder();
+		CoolBytes bytes = new CoolBytes();
 		int bytesRead = fileChannel.read(buffer);
 		while (bytesRead != -1) {
-			//cn.decode(buffer);
 			buffer.flip();
-			//decoder.decode(buffer,cb,false);
-			//cb.flip();
 			while (buffer.hasRemaining()) {
-				char c = (char) buffer.get();
-				sb.append(c);
+				byte b = buffer.get();
+				char c = (char) b;
+				bytes.add(b);
 				if (isCRLF(c)) {
 					buffer.compact();
-					return ignoreCRLF(sb.toString());
+					return ignoreCRLF(bytes.toString());
 				}
 			}
 			buffer.compact();
@@ -105,8 +111,8 @@ public class NIOReader {
 		}
 		buffer.flip();
 		lastLine = true;
-		if (sb.length() > 0) {
-			return sb.toString();
+		if (bytes.length() > 0) {
+			return bytes.toString();
 		}
 		return readLastBufferLine();
 	}
