@@ -3,5 +3,6 @@
 /target
 .classpath
 .project
-/.idea
+.idea
+/.idea/libraries
 *.iml
