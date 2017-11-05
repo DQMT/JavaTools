@@ -13,7 +13,7 @@ public class CharZip {
         String source = "C:\\Users\\Administrator\\git\\springBootDemo.7z";
         String target = "C:\\Users\\Administrator\\git\\charzip.txt";
         try {
-            //charZip(source, target);
+//            charZip(source, target);
             deCharZip(target, source);
         } catch (Exception e) {
             e.printStackTrace();
@@ -23,6 +23,7 @@ public class CharZip {
     public static void charZip(String source, String target) {
         DataInputStream dataInputStream = null;
         try {
+
             FileOutputStream fileOutputStream = new FileOutputStream(target);
             dataInputStream = new DataInputStream(new FileInputStream(source));
             int temp;
