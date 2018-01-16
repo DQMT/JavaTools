@@ -10,11 +10,21 @@ import java.io.*;
  */
 public class CharZip {
     public static void main(String[] args) {
-        String source = "C:\\Users\\Administrator\\git\\springBootDemo.7z";
-        String target = "C:\\Users\\Administrator\\git\\charzip.txt";
+        if (args.length < 3) {
+            System.out.println("require params: charZip/deCharZip source target");
+            return;
+        }
+        String source = args[1];
+        String target = args[2];
+
         try {
-//            charZip(source, target);
-            deCharZip(target, source);
+            if ("charZip".equals(args[0])) {
+                charZip(source, target);
+            } else if ("deCharZip".equals(args[0])) {
+                deCharZip(source, target);
+            }else{
+                System.out.println("require params: charZip/deCharZip source target");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -29,8 +39,8 @@ public class CharZip {
             int temp;
             while ((temp = dataInputStream.read()) != -1) {
                 String hex = Integer.toHexString(temp).toUpperCase();
-                if(hex.length()==1){
-                    hex = "0"+hex;
+                if (hex.length() == 1) {
+                    hex = "0" + hex;
                 }
                 fileOutputStream.write(hex.getBytes());
                 System.out.println(hex);
@@ -55,8 +65,8 @@ public class CharZip {
             int temp;
             StringBuilder sb = new StringBuilder();
             while ((temp = fileReader.read()) != -1) {
-                sb.append((char)temp);
-                System.out.println((char)temp);
+                sb.append((char) temp);
+                System.out.println((char) temp);
             }
             byte[] bytes = CoolBytes.hexStringToBytes(sb.toString());
             dataOutputStream.write(bytes);
