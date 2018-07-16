@@ -1,5 +1,6 @@
 package tools.charzip;
 
+import org.apache.commons.lang3.ArrayUtils;
 import tools.coolbyte.CoolBytes;
 
 import java.io.*;
@@ -10,19 +11,19 @@ import java.io.*;
  */
 public class CharZip {
     public static void main(String[] args) {
-        if (args.length < 3) {
+        /*if (args.length < 3) {
             System.out.println("require params: charZip/deCharZip source target");
             return;
-        }
+        }*/
+        args = ArrayUtils.toArray("deCharZip","C:\\Users\\Administrator\\Desktop\\1.txt","C:\\Users\\Administrator\\Desktop\\2.7z");
         String source = args[1];
         String target = args[2];
-
         try {
             if ("charZip".equals(args[0])) {
                 charZip(source, target);
             } else if ("deCharZip".equals(args[0])) {
                 deCharZip(source, target);
-            }else{
+            } else {
                 System.out.println("require params: charZip/deCharZip source target");
             }
         } catch (Exception e) {
